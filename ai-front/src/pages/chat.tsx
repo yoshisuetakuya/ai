@@ -49,8 +49,8 @@ const ChatPage = () => {
       }
       const data = await response.json();
       const resultText = data.finalSummary
-      ? `以下に調査結果を表示します。\n\n${data.finalSummary}`
-      : '調査結果がありません。';
+        ? `以下に調査結果を表示します。\n\n${data.finalSummary}`
+        : '調査結果がありません。';
       setMessages(prev => [...prev, { sender: 'system', text: resultText }]);
     } catch (error) {
       console.error(error);
@@ -93,7 +93,9 @@ const ChatPage = () => {
           overflowY: 'auto',
           padding: '1rem',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          borderRadius: '10px',
+          boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
         }}
       >
         {messages.map((msg, idx) => (
@@ -144,10 +146,10 @@ const ChatPage = () => {
           placeholder="テキストを入力"
           style={{ flex: 1, padding: '0.5rem', fontSize: '16px', resize: 'none', }}
         />
-        <button onClick={handleSuggest} style={{ padding: '0.5rem 1rem', fontSize: '16px' }}>
+        <button onClick={handleSuggest} style={{ padding: '0.5rem 1rem', fontSize: '16px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px' }}>
           提案
         </button>
-        <button onClick={handleSearch} disabled={isLoading} style={{ padding: '0.5rem 1rem', fontSize: '16px' }}>
+        <button onClick={handleSearch} disabled={isLoading} style={{ padding: '0.5rem 1rem', fontSize: '16px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px' }}>
           {isLoading ? '調査中' : '調査'}
         </button>
       </div>

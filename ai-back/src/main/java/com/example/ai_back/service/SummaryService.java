@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Async;
 
-import com.example.ai_back.dto.GeminiAPIResponse;
+import com.example.ai_back.dto.GeminiAPIResponseDto;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,13 +25,24 @@ public class SummaryService {
 
 	@Async
 	public CompletableFuture<String> summarizeWithGeminiAsync(String text) {
-		String prompt = "以下のスクレイピングした結果のテキストから、主要な事実や重要なデータを抜き出して要約してください。\n" + text;
+		String prompt = "次のテキストを要約してください。重要な事実や数値データ、ポイントとなる情報を抜き出し、簡潔で分かりやすい文章にまとめてください。\n\n"
+	               + "【要約のポイント】\n"
+	               + "・内容の核心となる情報を抜き出し、冗長な部分を省略する。\n"
+	               + "・事実やデータは正確に保持しつつ、簡潔な表現にする。\n"
+	               + "・ユーザーが短時間で理解できるよう、明瞭で分かりやすい言葉を用いる。\n\n"
+	               + "【要約対象のテキスト】\n" + text;
 		return requestGeminiApi(prompt);
 	}
 
 	@Async
 	public CompletableFuture<String> finalSummarizeWithGeminiAsync(String text) {
-		String prompt = "以下の提供された3つのテキストから一つの内容の文章にまとめて、ユーザーが理解しやすい文章を心掛けて要約してください。\n" + text;
+		String prompt = "以下の3つのテキストを統合し、1つの自然な流れの文章として要約してください。\n\n"
+	               + "【要約の指針】\n"
+	               + "・3つの内容を違和感なく組み合わせ、一貫性のある文章にする。\n"
+	               + "・冗長な部分を省きつつ、重要な情報やポイントはしっかり含める。\n"
+	               + "・単なる箇条書きではなく、論理的な流れを持たせたまとまりのある文章にする。\n"
+	               + "・読者がすぐに理解できるよう、分かりやすく簡潔な表現を使う。\n\n"
+	               + "【要約対象のテキスト】\n" + text;
 		return requestGeminiApi(prompt);
 	}
 
@@ -39,10 +50,10 @@ public class SummaryService {
 		Map<String, Object> requestBody = Map.of("contents",
 				new Object[] { Map.of("parts", new Object[] { Map.of("text", prompt) }) });
 
-		ResponseEntity<GeminiAPIResponse> response = restTemplate.postForEntity(apiUrl + "?key=" + apiKey, requestBody,
-				GeminiAPIResponse.class);
+		ResponseEntity<GeminiAPIResponseDto> response = restTemplate.postForEntity(apiUrl + "?key=" + apiKey, requestBody,
+				GeminiAPIResponseDto.class);
 
-		GeminiAPIResponse responseBody = response.getBody();
+		GeminiAPIResponseDto responseBody = response.getBody();
 		if (responseBody != null && !responseBody.getCandidates().isEmpty()) {
 			return CompletableFuture
 					.completedFuture(responseBody.getCandidates().get(0).getContent().getParts().get(0).getText());
